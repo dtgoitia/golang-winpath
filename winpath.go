@@ -13,7 +13,8 @@ import (
 func main() {
 	// Clear command line
 	ClearScreen()
-	Test()
+	TmpCreateEnvVar()
+	//Test()
 
 	// Get "PATH" environment variable
 	//pathArray := GetPath()
@@ -31,6 +32,21 @@ func main() {
 	// FindPath - TODO
 }
 
+// TmpCreateEnvVar : temporary function to create an environment variable to test
+func TmpCreateEnvVar() {
+	var (
+		cmdOut []byte
+		err    error
+	)
+	cmdExec := "C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe"
+	//cmdName := "$Env:path"
+	cmdName := "[Environment]::SetEnvironmentVariable(\"MyTestPath\", \"Test value\", \"User\")"
+	if cmdOut, err = exec.Command(cmdExec, cmdName).Output(); err != nil {
+		log.Fatal("ERROR:", err)
+	}
+	log.Println("\n\nOUTPUT:\n", string(cmdOut))
+}
+
 // Test : testing function
 func Test() {
 	var (
@@ -39,7 +55,7 @@ func Test() {
 	)
 	cmdExec := "C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe"
 	//cmdName := "$Env:path"
-	cmdName := "[Environment]::SetEnvironmentVariable(\"TestVariable\", \"Test value\", \"User\")"
+	cmdName := "[Environment]::SetEnvironmentVariable(\"MyTestPath\", \"Test value\", \"User\")"
 	if cmdOut, err = exec.Command(cmdExec, cmdName).Output(); err != nil {
 		log.Fatal("ERROR:", err)
 	}
@@ -48,14 +64,16 @@ func Test() {
 
 // GetPath : return array with paths in PATH
 func GetPath() []string {
-	pathVar := os.Getenv("PATH")
+	//pathVar := os.Getenv("PATH") ----------------------------------------------- UNCOMMENT
+	pathVar := os.Getenv("MyTestPath") // ---------------------------------------- REMOVE
 	pathArray := strings.Split(pathVar, ";")
 	return pathArray
 }
 
 // ListPath : list current paths in PATH
 func ListPath() {
-	pathArray := strings.Split(os.Getenv("PATH"), ";")
+	//pathArray := strings.Split(os.Getenv("PATH"), ";") ------------------------- UNCOMMENT
+	pathArray := strings.Split(os.Getenv("MyTestPath"), ";") // ------------------ REMOVE
 	for i := range pathArray {
 		log.Println(i, " ", pathArray[i])
 	}
@@ -67,7 +85,8 @@ func AddPath(newPath string) {
 	// - Concatenate array elements
 	// - Update "PATH"
 	var newPathVar string
-	pathArray := strings.Split(os.Getenv("PATH"), ";")
+	//pathArray := strings.Split(os.Getenv("PATH"), ";") ------------------------- UNCOMMENT
+	pathArray := strings.Split(os.Getenv("MyTestPath"), ";") // ------------------ REMOVE
 	log.Println("Current path Array:\n", pathArray)
 	newPathArray := append(pathArray, newPath)
 	for i := range newPathArray {
@@ -77,15 +96,18 @@ func AddPath(newPath string) {
 			newPathVar = newPathArray[i]
 		}
 	}
-	log.Print("Adding \"", newPath, "\" to PATH...")
-	err := os.Setenv("PATH", newPathVar)
+	//log.Print("Adding \"", newPath, "\" to PATH...") --------------------------- UNCOMMENT
+	log.Print("Adding \"", newPath, "\" to MyTestPath...") // -------------------- REMOVE
+	//err := os.Setenv("PATH", newPathVar)  -------------------------------------- UNCOMMENT
+	err := os.Setenv("MyTestPath", newPathVar) // -------------------------------- REMOVE
 	if err != nil {
 		log.Println(err)
 	} else {
 		log.Println("NO ERRORs in os.Setenv")
 	}
 	log.Println("Done.")
-	log.Println("PATH:\n", os.Getenv("PATH"))
+	//log.Println("PATH:\n", os.Getenv("PATH"))
+	log.Println("PATH:\n", os.Getenv("MyTestPath"))
 	log.Println("\n\nnewPATH:\n", newPathVar)
 }
 
